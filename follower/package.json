@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "changes-stream": "^2.2.0",
+    "request": "^2.88.2"
+  }
+}
