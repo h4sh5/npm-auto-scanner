@@ -111,7 +111,7 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 		Labels: labels,
 		Body: "```" + string(resultsStr) + "```",
 	}
-	log.Println("ghissue before marshaling:", ghissue)
+	// log.Println("ghissue before marshaling:", ghissue)
 	issueBodyStr,err := json.Marshal(ghissue)
 	if err != nil {
 		log.Println("error marshaling github_issue_body:",err)
