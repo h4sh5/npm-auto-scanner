@@ -16,11 +16,8 @@ jobs:
     - name: install guarddog
       run: pip3 install guarddog
 
-    - name: build golang npm scanner binary
-      run: go build
-
     - name: run continuous monitoring scanner
-      run: timeout 900 bash -c "while true; do ./npm-auto-scanner; done"
+      run: timeout 900 bash -c "while true; do git pull; go build; ./npm-auto-scanner; done"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
