@@ -12,11 +12,9 @@ jobs:
     timeout-minutes: 61
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-        cache: 'pip'
-    - run: pip3 install guarddog
+    
+    - name: install guarddog
+      run: pip3 install guarddog
 
     - name: build golang npm scanner binary
       run: go build
