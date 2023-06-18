@@ -92,14 +92,11 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
     	if valmap, ok := val.(map[string]interface{}); ok {
     		if len(valmap) == 0 {
 		    	delete(results, key)
-		    } else {
-		    	labels = append(labels, key)
 		    }
+    	} else {
+    		labels = append(labels, key) // append any non empty labels
     	}
 	    
-	    if _, ok := val.(string); ok {
-	    	labels = append(labels, key)
-	    }
 	}
 
 
