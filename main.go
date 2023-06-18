@@ -128,7 +128,7 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 func process_pkg(name string, version string) {
 	log.Println("process_pkg",name,version)
 	bin := "guarddog"
-	args := []string{"npm", "scan", "--output-format=json", "-x", "release_zero", "-x", "repository_integrity_mismatch", "-x", "single_python_file", name, "--version", version}
+	args := []string{"npm", "scan", "--output-format=json", "-x=release_zero", "-x=repository_integrity_mismatch", "-x=single_python_file", "-x=empty_information", name, "--version", version}
 	out, _ := RunCMD(bin, args, true)
 	raise_guarddog_issues(name, version, out)
 }
