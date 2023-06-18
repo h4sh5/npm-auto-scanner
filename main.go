@@ -80,6 +80,10 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 	log.Println(name, version, "has", issue_count, "issues")
 	var labels []string
     // delete empty issues
+    if  item["results"] == nil {
+    	log.Println("results is nil. skipping item:", item)
+		return
+    }
     results := item["results"].(map[string]interface{})
     for key, val := range results {
     	if valmap, ok := val.(map[string]interface{}); ok {
