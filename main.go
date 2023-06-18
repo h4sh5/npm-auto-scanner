@@ -30,14 +30,30 @@ func RunCMD(path string, args []string, debug bool) (out string, err error) {
         log.Println(out)
     }
 
+    // returns both out and err by default since its defined in func
     return
+}
+
+func raise_guarddog_issues(name string, version string, guarddog_json_out string) {
+	var item map[string]interface {}
+	err := json.Unmarshal([]byte(guarddog_json_out), &item)
+	if err != nil {
+		log.Println("error unmarshaling guarddog res:", err)
+	}
+	
+	// result := item["results"].(map[string]interface{})
+	issue := item["issues"].(float64)
+	log.Println(name, version, "has", issue, "issues")
+   
+
 }
 
 func process_pkg(name string, version string) {
 	log.Println("process_pkg",name,version)
 	bin := "guarddog"
-	args := []string{"npm", "scan", name, "--version", version}
-	RunCMD(bin, args, true)
+	args := []string{"npm", "scan", "--output-format=json", "-x", "release_zero", "-x", "repository_integrity_mismatch", "-x", "single_python_file", name, "--version", version}
+	out, _ := RunCMD(bin, args, true)
+	raise_guarddog_issues(name, version, out)
 }
 
 func main() {
