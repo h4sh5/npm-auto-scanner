@@ -97,23 +97,26 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 	    }
 	}
 
-	github_issue_body := GithubIssue{}
-	github_issue_body.title = name + " " + version + strconv.FormatFloat(issue_count, 'f', -1, 64) + "guarddog issues"
-	github_issue_body.labels = labels
+
 	resultsStr, err := json.Marshal(results)
 	if err != nil {
 		log.Println("error marshaling results:",err)
 		return
 	}
 
-	github_issue_body.body = "```" + string(resultsStr) + "```"
+	github_issue_body := GithubIssue{
+		title: name + " " + version + strconv.FormatFloat(issue_count, 'f', -1, 64) + "guarddog issues",
+		labels: labels,
+		body: "```" + string(resultsStr) + "```",
+	}
+
 	issueBodyStr,err := json.Marshal(github_issue_body)
 	if err != nil {
 		log.Println("error marshaling github_issue_body:",err)
 		return
 	}
 	if issue_count > 0 {
-		log.Println("creating github issue:", issueBodyStr)
+		log.Println("creating github issue:", string(issueBodyStr))
 		create_github_issue([]byte(issueBodyStr))
 	}
 	
