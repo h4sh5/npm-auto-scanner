@@ -107,7 +107,7 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 		return
 	}
 	ghissue := GithubIssue{
-		Title: name + " " + version + strconv.FormatFloat(issue_count, 'f', -1, 64) + "guarddog issues",
+		Title: name + " " + version + " has " strconv.FormatFloat(issue_count, 'f', -1, 64) + " guarddog issues",
 		Labels: labels,
 		Body: "```" + string(resultsStr) + "```",
 	}
