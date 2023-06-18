@@ -9,7 +9,7 @@ on:
 jobs:
   scan_new_npm_pkgs:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
     - uses: actions/checkout@v3
 
@@ -17,7 +17,7 @@ jobs:
       run: pip3 install guarddog
 
     - name: run continuous monitoring scanner
-      run: timeout 840 bash -c "while true; do git pull; go build; ./npm-auto-scanner; done"
+      run: timeout 900 bash -c "while true; do git pull; go build; ./npm-auto-scanner; done"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
