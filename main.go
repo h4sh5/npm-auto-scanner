@@ -97,7 +97,7 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 	    }
 	}
 
-	var github_issue_body GithubIssue
+	github_issue_body := GithubIssue{}
 	github_issue_body.title = name + " " + version + strconv.FormatFloat(issue_count, 'f', -1, 64) + "guarddog issues"
 	github_issue_body.labels = labels
 	resultsStr, err := json.Marshal(results)
