@@ -2,17 +2,17 @@ name: Scan new npm pkgs
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '0 * * * *'
+    - cron:  '*/15 * * * *'
 
 # run every hour, die to timeout, repeat
 
 jobs:
   scan_new_npm_pkgs:
     runs-on: ubuntu-latest
-    timeout-minutes: 61
+    timeout-minutes: 15
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: install guarddog
       run: pip3 install guarddog
 
@@ -20,7 +20,7 @@ jobs:
       run: go build
 
     - name: run continuous monitoring scanner
-      run: timeout 3600 ./npm-auto-scanner || echo error from npm-auto-scanner $?
+      run: timeout 900 ./npm-auto-scanner || echo error from npm-auto-scanner $?
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
