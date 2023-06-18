@@ -14,9 +14,9 @@ import (
 )
 
 type GithubIssue struct {
-	title string
-	body string
-	labels []string
+	title string `json:"title"`
+	body string `json:"body"`
+	labels []string `json:"labels"`
 }
 
 // https://stackoverflow.com/a/41516687
@@ -104,13 +104,11 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 		return
 	}
 
-	github_issue_body := GithubIssue{
+	issueBodyStr,err := json.Marshal( GithubIssue{
 		title: name + " " + version + strconv.FormatFloat(issue_count, 'f', -1, 64) + "guarddog issues",
 		labels: labels,
 		body: "```" + string(resultsStr) + "```",
-	}
-
-	issueBodyStr,err := json.Marshal(github_issue_body)
+	})
 	if err != nil {
 		log.Println("error marshaling github_issue_body:",err)
 		return
