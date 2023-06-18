@@ -14,9 +14,12 @@ import (
 )
 
 type GithubIssue struct {
-	title string `json:"title"`
-	body string `json:"body"`
-	labels []string `json:"labels"`
+	// objects must be exported, since encoding/json package and similar packages ignore unexported fields.
+	// that means fields must be capitalized. golang footgun
+
+	Title string `json:"title"`
+	Body string `json:"body"`
+	Labels []string `json:"labels"`
 }
 
 // https://stackoverflow.com/a/41516687
@@ -103,12 +106,13 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 		log.Println("error marshaling results:",err)
 		return
 	}
-
-	issueBodyStr,err := json.Marshal( GithubIssue{
-		title: name + " " + version + strconv.FormatFloat(issue_count, 'f', -1, 64) + "guarddog issues",
-		labels: labels,
-		body: "```" + string(resultsStr) + "```",
-	})
+	ghissue := GithubIssue{
+		Title: name + " " + version + strconv.FormatFloat(issue_count, 'f', -1, 64) + "guarddog issues",
+		Labels: labels,
+		Body: "```" + string(resultsStr) + "```",
+	}
+	log.Println("ghissue before marshaling:", ghissue)
+	issueBodyStr,err := json.Marshal(ghissue)
 	if err != nil {
 		log.Println("error marshaling github_issue_body:",err)
 		return
