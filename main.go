@@ -19,7 +19,7 @@ type GithubIssue struct {
 
 	Title string `json:"title"`
 	Body string `json:"body"`
-	Labels []string `json:"labels"`
+	Labels []string `json:"labels,omitempty"`
 }
 
 // https://stackoverflow.com/a/41516687
