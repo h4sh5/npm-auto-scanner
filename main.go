@@ -113,7 +113,8 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 		return
 	}
 	if issue_count > 0 {
-		create_github_issue(issueBodyStr)	
+		log.Println("creating github issue:", issueBodyStr)
+		create_github_issue([]byte(issueBodyStr))
 	}
 	
 
