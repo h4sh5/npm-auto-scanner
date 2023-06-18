@@ -8,7 +8,16 @@ import (
 	"time"
 	"os/exec"
 	"strings"
+	"strconv"
+	"bytes"
+	"os"
 )
+
+type GithubIssue struct {
+	title string
+	body string
+	labels []string
+}
 
 // https://stackoverflow.com/a/41516687
 // RunCMD is a simple wrapper around terminal commands
@@ -34,6 +43,27 @@ func RunCMD(path string, args []string, debug bool) (out string, err error) {
     return
 }
 
+func create_github_issue(jsonBody []byte) {
+	url := "https://api.github.com/repos/h4sh5/npm-auto-scanner/issues"
+	bodyReader := bytes.NewReader(jsonBody)
+	req, err := http.NewRequest(http.MethodPost, url, bodyReader)
+	req.Header.Add("Accept", "application/vnd.github+json")
+	req.Header.Add("Authorization", "Bearer " + string(os.Getenv("GITHUB_TOKEN")))
+	req.Header.Add("X-GitHub-Api-Version", "2022-11-28")
+	res, err := http.DefaultClient.Do(req)
+	resBody, err := ioutil.ReadAll(res.Body)
+	log.Println("github issue create resp:", string(resBody))
+
+	if err != nil {
+		log.Println("create_github_issue http req err:",err)
+	}
+	
+	if res.StatusCode != 201 && res.StatusCode != 200 {
+		log.Println("create_github_issue bad http code:", res.StatusCode)
+	}
+
+}
+
 func raise_guarddog_issues(name string, version string, guarddog_json_out string) {
 	var item map[string]interface {}
 	err := json.Unmarshal([]byte(guarddog_json_out), &item)
@@ -42,9 +72,46 @@ func raise_guarddog_issues(name string, version string, guarddog_json_out string
 	}
 	
 	// result := item["results"].(map[string]interface{})
-	issue := item["issues"].(float64)
-	log.Println(name, version, "has", issue, "issues")
-   
+	if item["issues"] == nil {
+		log.Println("issues is nil. skipping item:", item)
+		return
+	}
+	issue_count := item["issues"].(float64)
+	log.Println(name, version, "has", issue_count, "issues")
+	var labels []string
+    // delete empty issues
+    results := item["results"].(map[string]interface{})
+    for key, val := range results {
+    	if valmap, ok := val.(map[string]interface{}); ok {
+    		if len(valmap) == 0 {
+		    	delete(results, key)
+		    }
+    	}
+	    
+	    if _, ok := val.(string); ok {
+	    	labels = append(labels, key)
+	    }
+	}
+
+	var github_issue_body GithubIssue
+	github_issue_body.title = name + " " + version + strconv.FormatFloat(issue_count, 'f', -1, 64) + "guarddog issues"
+	github_issue_body.labels = labels
+	resultsStr, err := json.Marshal(results)
+	if err != nil {
+		log.Println("error marshaling results:",err)
+		return
+	}
+
+	github_issue_body.body = "```" + string(resultsStr) + "```"
+	issueBodyStr,err := json.Marshal(github_issue_body)
+	if err != nil {
+		log.Println("error marshaling github_issue_body:",err)
+		return
+	}
+	if issue_count > 0 {
+		create_github_issue(issueBodyStr)	
+	}
+	
 
 }
 
