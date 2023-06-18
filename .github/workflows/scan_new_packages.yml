@@ -20,7 +20,7 @@ jobs:
       run: go build
 
     - name: run continuous monitoring scanner
-      run: timeout 900 ./npm-auto-scanner || echo error from npm-auto-scanner $?
+      run: timeout 900 ./npm-auto-scanner
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
