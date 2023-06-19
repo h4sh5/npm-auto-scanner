@@ -17,7 +17,7 @@ jobs:
       run: pip3 install guarddog
 
     - name: run continuous monitoring scanner
-      run: timeout 900 bash -c "while true; do git pull; go build; ./npm-auto-scanner; done"
+      run: timeout 900 bash -c "while true; do git pull; go build; ./npm-auto-scanner; done"|| echo done error $?
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
